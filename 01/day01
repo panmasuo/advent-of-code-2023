@@ -1,0 +1,45 @@
+#include <iostream>
+#include <numeric>
+#include <regex>
+#include <string>
+#include <vector>
+
+// parse string, concatenate first and last digit of input
+std::string concatenate_first_and_last_digit(std::string& input)
+{
+    std::regex pattern("[\\d]");
+
+    auto numbers_begin = std::sregex_iterator(input.begin(), input.end(), pattern);
+    auto numbers_end = std::sregex_iterator();
+
+    std::string first_number{};
+    std::string second_number{};
+
+    std::smatch first_match = *numbers_begin;
+    first_number = first_match.str();
+    auto count = std::distance(numbers_begin, numbers_end);
+
+    for (int i = 0; i < count - 1; ++i) {
+        numbers_begin++;
+    }
+
+    std::smatch second_match = *numbers_begin;
+    second_number = second_match.str();
+
+    return first_number + second_number;
+}
+
+// input data
+std::vector<std::string> in{"1abc2", "pqr3stu8vwx", "a1b2c3d4e5f", "treb7uchet"};
+
+auto main() -> int
+{
+
+    auto sum = std::transform_reduce(in.begin(), in.end(), 0, std::plus{},
+        [](std::string& line) { return stoi(concatenate_first_and_last_digit(line)); }
+    );
+
+    std::cout << "sum: " << sum;
+
+    return 0;
+}
